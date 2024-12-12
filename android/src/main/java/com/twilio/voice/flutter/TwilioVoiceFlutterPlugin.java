@@ -208,8 +208,10 @@ public class TwilioVoiceFlutterPlugin implements
       case "makeCall": {
         try {
           String to = call.argument("to");
+          String from = call.argument("from");
+          String twilioAccessToken = call.argument("twilioAccessToken");
           Map<String, Object> data = call.argument("data");
-          twilioUtils.makeCall(to, data, getCallListener());
+          twilioUtils.makeCall(to, from, twilioAccessToken, data, getCallListener());
           responseChannel.invokeMethod("callConnecting", twilioUtils.getCallDetails());
           result.success(twilioUtils.getCallDetails());
         } catch (Exception exception) {

@@ -101,18 +101,17 @@ public class TwilioUtils {
         });
     }
 
-    public void makeCall(String to, Map<String, Object> data, Call.Listener listener) {
+    public void makeCall(String to, String from, String twilioAccessToken, Map<String, Object> data, Call.Listener listener) {
         if (this.activeCall != null) {
             throw new RuntimeException("There is a call in progress");
         }
 
-        String accessToken = PreferencesUtils.getInstance(this.context).getAccessToken();
-        if (accessToken == null) {
-            throw new RuntimeException("No access token");
-        }
+        String accessToken = twilioAccessToken;
 
         HashMap<String, String> params = new HashMap<>();
         params.put("To", to);
+        params.put("From", from);
+        params.put("CallerId", from);
         if (data != null) {
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 params.put(entry.getKey(), entry.getValue().toString());

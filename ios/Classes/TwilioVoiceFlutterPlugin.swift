@@ -9,6 +9,8 @@ public class TwilioVoiceFlutterPlugin: NSObject, FlutterPlugin,   NotificationDe
 
     var deviceTokenString: Data?
     var callTo: String = ""
+    var callFrom: String = ""
+    var twilioAccessToken: String = ""
     var callData: NSDictionary?
     var callStatus: String = ""
     var callInvite: CallInvite?
@@ -79,6 +81,8 @@ public class TwilioVoiceFlutterPlugin: NSObject, FlutterPlugin,   NotificationDe
 
         if flutterCall.method == "makeCall" {
             guard let callTo = arguments?["to"] as? String else {return}
+            guard let callFrom = arguments?["from"] as? String else {return}
+            guard let twilioAccessToken = arguments?["twilioAccessToken"] as? String else {return}
             guard let callData = arguments?["data"] as? NSDictionary else {return}
 
 
@@ -95,6 +99,8 @@ public class TwilioVoiceFlutterPlugin: NSObject, FlutterPlugin,   NotificationDe
 
             self.callInvite = nil
             self.callTo = callTo
+            self.callFrom = callFrom
+            self.twilioAccessToken = twilioAccessToken
             self.callData = callData
             self.callStatus = "callConnecting"
             self.fromDisplayName = fromDisplayName
@@ -657,10 +663,7 @@ public class TwilioVoiceFlutterPlugin: NSObject, FlutterPlugin,   NotificationDe
     }
 
     func performVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Swift.Void) {
-        guard let accessToken = getAccessToken() else {
-            completionHandler(false)
-            return
-        }
+        var accessToken = self.twilioAccessToken
 
         var params: [String: String] = [:]
         if self.callData != nil {
@@ -670,6 +673,8 @@ public class TwilioVoiceFlutterPlugin: NSObject, FlutterPlugin,   NotificationDe
         }
 
         params["To"] = self.callTo
+        params["From"] = self.callFrom
+        params["CallerId"] = self.callFrom
 
         let connectOptions: ConnectOptions = ConnectOptions(accessToken: accessToken) { (builder) in
             builder.params = params
