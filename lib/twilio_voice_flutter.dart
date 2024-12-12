@@ -125,10 +125,14 @@ class TwilioVoiceFlutter {
   /// [data] is optional and can include additional information to send with the call; defaults to an empty map.
   static Future<TwilioVoiceFlutterCall> makeCall({
     required String to,
+    required String from,
+    required String twilioAccessToken,
     Map<String, dynamic> data = const <String, dynamic>{},
   }) async {
     final args = <String, Object>{
       "to": to,
+      "from": from,
+      "twilioAccessToken": twilioAccessToken,
       "data": data,
     };
 
